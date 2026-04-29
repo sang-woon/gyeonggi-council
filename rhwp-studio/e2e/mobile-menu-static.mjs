@@ -73,9 +73,9 @@ async function main() {
   });
 
   const failures = [];
+  const networkFailures = [];
   try {
     const page = await browser.newPage();
-    const networkFailures = [];
     page.on('pageerror', (err) => failures.push(`pageerror: ${err.message}`));
     page.on('requestfailed', (req) => {
       networkFailures.push(`${req.failure()?.errorText} ${req.url()}`);
