@@ -1,21 +1,32 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ProGuard / R8 규칙 — 경기도의회 HWP 뷰어
+# Capacitor + WebView + WASM 기반 앱
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# 디버그 정보 보존 (크래시 분석용)
+-keepattributes SourceFile,LineNumberTable
+-keepattributes *Annotation*
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Capacitor 관련 클래스 보존
+-keep class com.getcapacitor.** { *; }
+-keep @com.getcapacitor.annotation.CapacitorPlugin class * { *; }
+-keepclassmembers class * {
+    @com.getcapacitor.annotation.PluginMethod *;
+}
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# WebView JavaScript 인터페이스 보존
+-keepclassmembers class kr.go.gg.council.hwp.** {
+    @android.webkit.JavascriptInterface *;
+}
+
+# Cordova plugins (Capacitor가 내부적으로 사용)
+-keep class org.apache.cordova.** { *; }
+-keep class * extends org.apache.cordova.CordovaPlugin
+
+# AndroidX
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
+
+# Splash screen
+-keep class androidx.core.splashscreen.** { *; }
+
+# WASM 자체는 native이라 별도 ProGuard 영향 없음
+# WebView 내부에서 로드되는 JS는 이미 Vite 빌드에서 minified
