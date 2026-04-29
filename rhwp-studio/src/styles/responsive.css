@@ -237,9 +237,39 @@
   }
 }
 
-/* ─── 가상 키보드 대응 ───────────────────────────────── */
+/* ─── 가상 키보드 대응 (visualViewport API) ─────────── */
+/* MobileMenu가 body.keyboard-open 클래스를 부착할 때 적용 */
+body.keyboard-open #menu-bar,
+body.keyboard-open #style-bar,
+body.keyboard-open #status-bar {
+  display: none;
+}
+body.keyboard-open #editor-area {
+  display: flex;
+  flex-direction: column;
+}
+body.keyboard-open #studio-root {
+  height: var(--visual-viewport-height, 100dvh);
+}
+
+/* ─── safe-area-inset (홈 인디케이터·노치 대응) ────── */
+@supports (padding: max(0px)) {
+  #status-bar {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+    height: calc(28px + env(safe-area-inset-bottom));
+  }
+  #menu-bar {
+    padding-left: max(4px, env(safe-area-inset-left));
+    padding-right: max(4px, env(safe-area-inset-right));
+  }
+  #scroll-container {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* fallback: 화면 짧을 때 도구바 자동 숨김 (visualViewport 미지원 환경) */
 @media (max-height: 500px) and (max-width: 767px) {
-  /* 키보드가 올라온 상태: 도구 영역 최소화 */
   #menu-bar { display: none; }
   #style-bar { display: none; }
   #status-bar { display: none; }
