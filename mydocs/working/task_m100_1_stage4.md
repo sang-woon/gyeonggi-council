@@ -3,7 +3,54 @@
 ## 상태
 
 🟢 **단계 4a (자율 가능 부분) 완료**
-🟡 **단계 4b** (실제 keystore 생성·AAB 빌드)는 작업지시자/기관 측 작업으로 분리
+🟢 **단계 4b debug 빌드 검증 완료** (Android cmdline-tools + JDK 21 자율 설치 → Debug APK 빌드 성공)
+🟡 **단계 4b release AAB 빌드**는 작업지시자/기관 측 keystore 생성 후 진행
+
+## 자율 추가 검증 (2026-04-29 후속)
+
+### 환경 자율 셋업
+
+| 항목 | 결과 |
+|------|------|
+| Android cmdline-tools 11076708 (D:\AndroidSDK) | ✅ 다운로드 + 추출 |
+| SDK 라이선스 7건 자동 수락 | ✅ |
+| platform-tools, platforms;android-34, build-tools;34.0.0 | ✅ 설치 |
+| Microsoft OpenJDK 21.0.10 (winget) | ✅ 설치 (JDK 17 → 21로 업그레이드, Capacitor 8 요구) |
+| `local.properties` (sdk.dir, gitignore) | ✅ |
+
+### Debug APK 빌드 검증
+
+```bash
+JAVA_HOME=C:\Program Files\Microsoft\jdk-21.0.10.7-hotspot
+ANDROID_HOME=D:\AndroidSDK
+./gradlew :app:assembleDebug
+# BUILD SUCCESSFUL in 2m 55s
+# 110 actionable tasks: 110 executed
+```
+
+산출물: `app/build/outputs/apk/debug/app-debug.apk` (12.5 MB)
+
+### APK 메타데이터 검증 (`aapt2 dump badging`)
+
+| 속성 | 값 | 검증 |
+|------|----|------|
+| package | `kr.go.gg.council.hwp` | ✅ 단계 1 ID 적용 |
+| versionCode | 1 | ✅ |
+| versionName | `1.0.0` | ✅ |
+| minSdkVersion | 24 (Android 7.0) | ✅ |
+| targetSdkVersion | 36 | ✅ |
+| application-label | `경기도의회 HWP 뷰어` | ✅ |
+| 권한 | `INTERNET` 만 (+ 시스템 자동 추가) | ✅ 광범위 권한 없음 |
+
+### Intent-filter 검증 (`aapt2 dump xmltree`)
+
+```
+android.intent.action.VIEW
+mimeType: application/x-hwp / haansofthwp / haansofthwpx / vnd.hancom.hwp / vnd.hancom.hwpx / octet-stream
+pathPattern: .*\.hwp / .*\.hwpx / .*\..*\.hwp / ...
+```
+
+→ **단계 3 인텐트 필터가 APK에 정상 컴파일**되어 외부 앱에서 .hwp 파일 탭 시 본 앱이 후보로 노출 가능.
 
 ## 단계 4a 완료 항목 (자율 진행)
 
