@@ -1,0 +1,115 @@
+/* 읽기 전용 모드 배너 */
+
+.readonly-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--banner-border, #e5e7eb);
+  font-size: 13px;
+  line-height: 1.4;
+  background: #fffbeb;
+  color: #78350f;
+  animation: readonly-banner-slide 180ms ease-out;
+}
+
+@keyframes readonly-banner-slide {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+.readonly-banner__icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.readonly-banner__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.readonly-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.readonly-banner__btn {
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  padding: 3px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.readonly-banner__btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.readonly-banner__btn--close {
+  border: none;
+  font-size: 16px;
+  padding: 0 6px;
+  line-height: 1;
+}
+
+/* warn 레벨 (노란 톤) */
+.readonly-banner--warn {
+  background: #fef3c7;
+  color: #92400e;
+  border-bottom-color: #fde68a;
+}
+
+/* block 레벨 (빨간 톤) */
+.readonly-banner--block {
+  background: #fee2e2;
+  color: #991b1b;
+  border-bottom-color: #fecaca;
+  font-weight: 500;
+}
+
+/* === 읽기 전용 모드 — 도구 비활성화 === */
+
+body[data-mode="readonly-auto"] #icon-toolbar,
+body[data-mode="readonly-auto"] #style-bar {
+  pointer-events: none;
+  opacity: 0.45;
+  filter: grayscale(0.5);
+  transition: opacity 150ms ease;
+}
+
+/* 메뉴바의 편집(편집/입력/서식/표/쪽) 항목도 비활성 */
+body[data-mode="readonly-auto"] #menu-bar [data-edit-only] {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 캐럿 깜빡임 차단 (시각적 일관성) */
+body[data-mode="readonly-auto"] .hf-editing,
+body[data-mode="readonly-auto"] #scroll-container {
+  caret-color: transparent;
+}
+
+/* 상태 표시줄에 읽기 전용 배지 */
+body[data-mode="readonly-auto"] #sb-mode::before,
+body[data-mode="readonly-forced"] #sb-mode::before {
+  content: '읽기 전용';
+  display: inline-block;
+  padding: 1px 6px;
+  margin-right: 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 500;
+}
+body[data-mode="readonly-forced"] #sb-mode::before {
+  content: '강제 편집';
+  background: #fef3c7;
+  color: #92400e;
+}
