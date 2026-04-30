@@ -1,0 +1,97 @@
+apply plugin: 'com.android.application'
+
+// 서명 설정: 환경변수 또는 keystore.properties 파일에서 읽음
+// keystore/.passwords.local 또는 ANDROID_STORE_PASSWORD/ANDROID_KEY_PASSWORD 환경변수 사용
+def keystorePropertiesFile = rootProject.file('../../keystore/keystore.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+def storeFilePath = keystoreProperties['storeFile'] ?: System.getenv('ANDROID_KEYSTORE_PATH') ?: '../../../keystore/release.keystore'
+def storePasswordValue = keystoreProperties['storePassword'] ?: System.getenv('ANDROID_STORE_PASSWORD')
+def keyAliasValue = keystoreProperties['keyAlias'] ?: System.getenv('ANDROID_KEY_ALIAS') ?: 'gyeonggi-council'
+def keyPasswordValue = keystoreProperties['keyPassword'] ?: System.getenv('ANDROID_KEY_PASSWORD')
+
+android {
+    namespace = "kr.go.gg.council.hwp"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "kr.go.gg.council.hwp"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+
+    signingConfigs {
+        release {
+            if (storePasswordValue != null && keyPasswordValue != null) {
+                storeFile file(storeFilePath)
+                storePassword storePasswordValue
+                keyAlias keyAliasValue
+                keyPassword keyPasswordValue
+                // Play App Signing 권장 (V1 비활성, V2/V3 활성)
+                v1SigningEnabled false
+                v2SigningEnabled true
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // 서명 비밀번호가 설정된 경우에만 release signing 사용 (CI/로컬 양쪽 호환)
+            if (storePasswordValue != null && keyPasswordValue != null) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            // 디버그 빌드는 자동 디버그 키스토어 사용 (별도 설정 불필요)
+        }
+    }
+
+    bundle {
+        // Play Store가 디바이스별로 분할 APK 생성하도록 (앱 크기 ↓)
+        language { enableSplit = true }
+        density { enableSplit = true }
+        abi { enableSplit = true }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

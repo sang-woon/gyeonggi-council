@@ -9,6 +9,8 @@ import {
   saveDocumentToFileSystem,
   type FileSystemWindowLike,
 } from '@/command/file-system-access';
+import { isNativePlatform } from '@/core/platform';
+import { writeBytesToDocuments } from '@/core/native-file';
 
 function appendPrintStyle(doc: Document, widthMm: number, heightMm: number): void {
   const style = doc.createElement('style');
@@ -118,6 +120,13 @@ export const fileCommands: CommandDef[] = [
     label: '열기',
     async execute(services) {
       try {
+        // Capacitor (Android/iOS): 네이티브 파일 피커 사용
+        // <input type="file">은 Capacitor WebView에서도 정상 동작 → 안드로이드 SAF 호출
+        if (isNativePlatform()) {
+          document.getElementById('file-input')?.click();
+          return;
+        }
+
         const handle = await pickOpenFileHandle(window as FileSystemWindowLike);
         if (!handle) {
           document.getElementById('file-input')?.click();
@@ -153,6 +162,14 @@ export const fileCommands: CommandDef[] = [
         const mimeType = isHwpx ? 'application/hwp+zip' : 'application/x-hwp';
         const blob = new Blob([bytes as unknown as BlobPart], { type: mimeType });
         console.log(`[file:save] format=${sourceFormat}, isHwpx=${isHwpx}, ${bytes.length} bytes`);
+
+        // Capacitor 네이티브: Documents/rhwp/<name>에 저장
+        if (isNativePlatform()) {
+          const result = await writeBytesToDocuments(saveName, bytes);
+          services.wasm.fileName = saveName;
+          console.log(`[file:save] (native) ${result.uri} (${(bytes.length / 1024).toFixed(1)}KB)`);
+          return;
+        }
 
         // 1) 기존 파일 handle이 있으면 같은 파일에 저장, 없으면 save picker 시도
         try {
