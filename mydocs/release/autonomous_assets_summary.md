@@ -141,9 +141,12 @@ cd rhwp-studio/android && ./gradlew :app:assembleDebug
 | 문서 | 용도 |
 |------|------|
 | `mydocs/release/play_console_content_rating_ko.md` | IARC 콘텐츠 등급 설문 응답 가이드 (전체 이용가 3+) |
+| `mydocs/release/play_console_content_rating_en.md` | 영문 버전 (영어 인터페이스 또는 Google 리뷰어 응대용) |
 | `mydocs/release/play_console_rejection_appeals.md` | 거절 시 항소문 템플릿 (Wrapped Website 외 6종) |
 | `mydocs/release/internal_testing_checklist.md` | 내부 테스트 체크리스트 (인쇄 가능, 테스터 배포용) |
 | `mydocs/release/rollout_monitoring_guide.md` | 출시 후 Play Console Vitals 모니터링 + 리뷰 답변 템플릿 + 비상 대응 |
+| `mydocs/release/vitals_alert_setup.md` | Android Vitals 임계 알림 설정 (Phase 1~3 단계적 도입) |
+| `scripts/verify-aab.sh` | AAB Pre-submission 자동 검증 (서명·메타데이터·권한·인텐트·정책 URL) |
 
 ## 결론
 
