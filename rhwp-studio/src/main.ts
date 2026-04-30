@@ -23,6 +23,7 @@ import { ContextMenu } from '@/ui/context-menu';
 import { CommandPalette } from '@/ui/command-palette';
 import { showValidationModalIfNeeded } from '@/ui/validation-modal';
 import { showToast } from '@/ui/toast';
+import { isNativePlatform } from '@/core/platform';
 import { evaluateFontAvailability } from '@/core/font-availability';
 import { decideMode, applyDecision, resetMode, onModeChange, isEditable } from '@/core/readonly-mode';
 import { mountReadonlyBanner } from '@/ui/readonly-banner';
@@ -441,10 +442,9 @@ function setupEventListeners(): void {
   });
 }
 
-/** 모바일 환경 추정 — Capacitor가 있으면 그것을, 없으면 뷰포트 크기로 판단 */
+/** 모바일 환경 추정 — Capacitor 네이티브이거나 뷰포트가 좁은 경우 */
 function isMobileLike(): boolean {
-  const cap = (globalThis as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
-  if (cap?.isNativePlatform?.()) return true;
+  if (isNativePlatform()) return true;
   return typeof window !== 'undefined' && window.innerWidth < 768;
 }
 
