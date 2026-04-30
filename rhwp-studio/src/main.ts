@@ -5,6 +5,8 @@ import { CanvasView } from '@/view/canvas-view';
 import { InputHandler } from '@/engine/input-handler';
 import { Toolbar } from '@/ui/toolbar';
 import { MenuBar } from '@/ui/menu-bar';
+import { MobileMenu } from '@/ui/mobile-menu';
+import { onNativeFileOpen } from '@/core/native-file';
 import { loadWebFonts } from '@/core/font-loader';
 import { CommandRegistry } from '@/command/registry';
 import { CommandDispatcher } from '@/command/dispatcher';
@@ -21,6 +23,11 @@ import { ContextMenu } from '@/ui/context-menu';
 import { CommandPalette } from '@/ui/command-palette';
 import { showValidationModalIfNeeded } from '@/ui/validation-modal';
 import { showToast } from '@/ui/toast';
+import { isNativePlatform } from '@/core/platform';
+import { evaluateFontAvailability } from '@/core/font-availability';
+import { decideMode, applyDecision, resetMode, onModeChange, isEditable } from '@/core/readonly-mode';
+import { mountReadonlyBanner } from '@/ui/readonly-banner';
+import '@/styles/readonly-banner.css';
 import { CellSelectionRenderer } from '@/engine/cell-selection-renderer';
 import { TableObjectRenderer } from '@/engine/table-object-renderer';
 import { TableResizeRenderer } from '@/engine/table-resize-renderer';
@@ -33,6 +40,16 @@ const eventBus = new EventBus();
 if (import.meta.env.DEV) {
   (window as any).__wasm = wasm;
   (window as any).__eventBus = eventBus;
+  // 읽기 전용 모드 모듈 (E2E에서 동일 인스턴스 접근 보장)
+  Promise.all([
+    import('@/core/readonly-mode'),
+    import('@/ui/readonly-banner'),
+  ]).then(([mode, banner]) => {
+    (window as any).__readonly = mode;
+    (window as any).__banner = banner;
+    // E2E는 문서 로드 없이 mountReadonlyBanner를 호출해야 하므로 dev에서 사전 마운트
+    banner.mountReadonlyBanner();
+  });
 }
 let canvasView: CanvasView | null = null;
 let inputHandler: InputHandler | null = null;
@@ -137,7 +154,30 @@ async function initialize(): Promise<void> {
       new TableObjectRenderer(container, canvasView.getVirtualScroll(), true),
     );
 
-    new MenuBar(document.getElementById('menu-bar')!, eventBus, dispatcher);
+    const menuBarEl = document.getElementById('menu-bar')!;
+    new MenuBar(menuBarEl, eventBus, dispatcher);
+    new MobileMenu(menuBarEl);
+
+    // 안드로이드 외부 인텐트로 .hwp 파일이 열릴 때
+    onNativeFileOpen((file) => {
+      eventBus.emit('open-document-bytes', {
+        bytes: file.bytes,
+        fileName: file.fileName,
+      });
+    });
+
+    // 읽기 전용 모드 변경 시 InputHandler 활성/비활성 동기화
+    onModeChange(() => {
+      if (!inputHandler) return;
+      if (isEditable()) {
+        // 모드가 readonly-auto에서 readonly-forced로 전환 시 입력 재활성화
+        if (!(inputHandler as unknown as { active: boolean }).active) {
+          inputHandler.activateWithCaretPosition();
+        }
+      } else {
+        inputHandler.deactivate();
+      }
+    });
 
     // 툴바 내 data-cmd 버튼 클릭 → 커맨드 디스패치
     document.querySelectorAll('.tb-btn[data-cmd]').forEach(btn => {
@@ -402,9 +442,16 @@ function setupEventListeners(): void {
   });
 }
 
+/** 모바일 환경 추정 — Capacitor 네이티브이거나 뷰포트가 좁은 경우 */
+function isMobileLike(): boolean {
+  if (isNativePlatform()) return true;
+  return typeof window !== 'undefined' && window.innerWidth < 768;
+}
+
 /** 문서 초기화 공통 시퀀스 (loadFile, createNewDocument 양쪽에서 사용) */
 async function initializeDocument(docInfo: DocumentInfo, displayName: string): Promise<void> {
   const msg = sbMessage();
+  resetMode(); // 새 문서 로드 시 이전 모드 초기화
   try {
     console.log('[initDoc] 1. 폰트 로딩 시작');
     if (docInfo.fontsUsed?.length) {
@@ -413,6 +460,18 @@ async function initializeDocument(docInfo: DocumentInfo, displayName: string): P
       });
     }
     console.log('[initDoc] 2. 폰트 로딩 완료');
+
+    // 폰트 가용성 평가 + 모드 결정 (단계 2 통합)
+    try {
+      const report = evaluateFontAvailability(docInfo.fontsUsed ?? []);
+      const decision = decideMode(report, { isMobile: isMobileLike() });
+      console.log(`[font-availability] missing ${report.missingCount}/${report.totalCount} (ratio=${report.missingRatio.toFixed(2)}) → mode=${decision.mode} level=${decision.level}`);
+      applyDecision(decision);
+      mountReadonlyBanner();
+    } catch (e) {
+      console.warn('[font-availability] 평가 실패 (치명적이지 않음):', e);
+    }
+
     msg.textContent = displayName;
     totalSections = docInfo.sectionCount ?? 1;
     sbSection().textContent = `구역: 1 / ${totalSections}`;
