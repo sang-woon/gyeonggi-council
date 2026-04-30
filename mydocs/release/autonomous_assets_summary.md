@@ -136,6 +136,15 @@ cd rhwp-studio/android && ./gradlew :app:assembleDebug
 - 스크린샷 시나리오: `scripts/capture-screenshots.mjs`의 `SCENARIOS` 배열
 - 개인정보처리방침: `rhwp-studio/public/privacy.html`
 
+## 8. 추가 운영 가이드 (작업지시자용)
+
+| 문서 | 용도 |
+|------|------|
+| `mydocs/release/play_console_content_rating_ko.md` | IARC 콘텐츠 등급 설문 응답 가이드 (전체 이용가 3+) |
+| `mydocs/release/play_console_rejection_appeals.md` | 거절 시 항소문 템플릿 (Wrapped Website 외 6종) |
+| `mydocs/release/internal_testing_checklist.md` | 내부 테스트 체크리스트 (인쇄 가능, 테스터 배포용) |
+| `mydocs/release/rollout_monitoring_guide.md` | 출시 후 Play Console Vitals 모니터링 + 리뷰 답변 템플릿 + 비상 대응 |
+
 ## 결론
 
-Play Store 제출에 필요한 모든 시각 자료·정책 URL·메타데이터 자율 생성 완료. 작업지시자의 키스토어 생성 + Play Console 제출만 남음.
+Play Store 제출에 필요한 모든 시각 자료·정책 URL·메타데이터 + 운영 가이드 자율 생성 완료. 작업지시자의 키스토어 생성 + push + Play Console 제출만 남음.
