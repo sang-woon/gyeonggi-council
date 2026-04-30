@@ -81,8 +81,8 @@ jobs:
         working-directory: rhwp-studio
         run: npx vite build --base=/rhwp/
       - name: Copy Google Search Console verification file
-              run: cp google1ca6334f0379fba2.html rhwp-studio/dist/google1ca6334f0379fba2.html
-              
+        run: cp google1ca6334f0379fba2.html rhwp-studio/dist/google1ca6334f0379fba2.html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
