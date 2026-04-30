@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "e2e": "node e2e/text-flow.test.mjs"
+    "e2e": "node e2e/text-flow.test.mjs",
+    "e2e:readonly-mode": "node e2e/readonly-mode.test.mjs",
+    "test:unit": "node --experimental-strip-types test/font-availability.test.mjs && node --experimental-strip-types test/readonly-mode.test.mjs"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
