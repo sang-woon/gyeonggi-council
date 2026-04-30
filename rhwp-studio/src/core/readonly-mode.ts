@@ -63,10 +63,13 @@ const listeners = new Set<Listener>();
 let currentMode: Mode = 'edit';
 let currentDecision: ModeDecision | null = null;
 
-/** 결정 적용 — 모드 전환 시 리스너에 통지 */
+/** 결정 적용 — 모드 미변경이어도 level 변화가 있으므로 항상 통지 */
 export function applyDecision(d: ModeDecision): void {
   currentDecision = d;
-  setMode(d.mode);
+  if (d.mode !== currentMode) {
+    currentMode = d.mode;
+  }
+  notify();
 }
 
 /** 모드 직접 설정 — 동일 모드면 noop, 변화 시에만 통지 */

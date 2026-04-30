@@ -37,6 +37,16 @@ const eventBus = new EventBus();
 if (import.meta.env.DEV) {
   (window as any).__wasm = wasm;
   (window as any).__eventBus = eventBus;
+  // 읽기 전용 모드 모듈 (E2E에서 동일 인스턴스 접근 보장)
+  Promise.all([
+    import('@/core/readonly-mode'),
+    import('@/ui/readonly-banner'),
+  ]).then(([mode, banner]) => {
+    (window as any).__readonly = mode;
+    (window as any).__banner = banner;
+    // E2E는 문서 로드 없이 mountReadonlyBanner를 호출해야 하므로 dev에서 사전 마운트
+    banner.mountReadonlyBanner();
+  });
 }
 let canvasView: CanvasView | null = null;
 let inputHandler: InputHandler | null = null;
