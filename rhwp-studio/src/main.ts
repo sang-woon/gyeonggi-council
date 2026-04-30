@@ -5,6 +5,8 @@ import { CanvasView } from '@/view/canvas-view';
 import { InputHandler } from '@/engine/input-handler';
 import { Toolbar } from '@/ui/toolbar';
 import { MenuBar } from '@/ui/menu-bar';
+import { MobileMenu } from '@/ui/mobile-menu';
+import { onNativeFileOpen } from '@/core/native-file';
 import { loadWebFonts } from '@/core/font-loader';
 import { CommandRegistry } from '@/command/registry';
 import { CommandDispatcher } from '@/command/dispatcher';
@@ -137,7 +139,17 @@ async function initialize(): Promise<void> {
       new TableObjectRenderer(container, canvasView.getVirtualScroll(), true),
     );
 
-    new MenuBar(document.getElementById('menu-bar')!, eventBus, dispatcher);
+    const menuBarEl = document.getElementById('menu-bar')!;
+    new MenuBar(menuBarEl, eventBus, dispatcher);
+    new MobileMenu(menuBarEl);
+
+    // 안드로이드 외부 인텐트로 .hwp 파일이 열릴 때
+    onNativeFileOpen((file) => {
+      eventBus.emit('open-document-bytes', {
+        bytes: file.bytes,
+        fileName: file.fileName,
+      });
+    });
 
     // 툴바 내 data-cmd 버튼 클릭 → 커맨드 디스패치
     document.querySelectorAll('.tb-btn[data-cmd]').forEach(btn => {
