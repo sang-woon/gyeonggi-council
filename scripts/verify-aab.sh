@@ -16,7 +16,7 @@
 # 환경변수:
 #   AAB_PATH=...                    (기본: rhwp-studio/android/app/build/outputs/bundle/release/app-release.aab)
 #   ANDROID_HOME=...                (apksigner 위치 결정)
-#   PRIVACY_URL=...                 (기본: https://sang-woon.github.io/gyeonggi-council/rhwp/privacy.html)
+#   PRIVACY_URL=...                 (기본: https://sang-woon.github.io/gyeonggi-council/privacy.html)
 #   EXPECTED_PACKAGE=kr.go.gg.council.hwp
 #   EXPECTED_VERSION_NAME=1.0.0
 #   EXPECTED_VERSION_CODE=1
@@ -44,7 +44,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 AAB_PATH="${AAB_PATH:-$ROOT/rhwp-studio/android/app/build/outputs/bundle/release/app-release.aab}"
-PRIVACY_URL="${PRIVACY_URL:-https://sang-woon.github.io/gyeonggi-council/rhwp/privacy.html}"
+PRIVACY_URL="${PRIVACY_URL:-https://sang-woon.github.io/gyeonggi-council/privacy.html}"
 EXPECTED_PACKAGE="${EXPECTED_PACKAGE:-kr.go.gg.council.hwp}"
 EXPECTED_VERSION_NAME="${EXPECTED_VERSION_NAME:-1.0.0}"
 EXPECTED_VERSION_CODE="${EXPECTED_VERSION_CODE:-1}"

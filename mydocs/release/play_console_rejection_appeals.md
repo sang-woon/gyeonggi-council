@@ -102,7 +102,7 @@ We've identified the issue: our privacy policy is hosted on GitHub Pages and
 the deployment workflow finished after our initial submission. The URL is
 now live and verified:
 
-  https://sang-woon.github.io/gyeonggi-council/rhwp/privacy.html
+  https://sang-woon.github.io/gyeonggi-council/privacy.html
 
 Please re-verify the URL. We have updated our app submission accordingly.
 

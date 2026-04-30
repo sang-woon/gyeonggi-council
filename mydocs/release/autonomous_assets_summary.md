@@ -39,7 +39,7 @@
 | HTML 소스 | `rhwp-studio/public/privacy.html` (반응형 + 한국어) |
 | 빌드 결과 | `rhwp-studio/dist/privacy.html` (`npm run build` 시 자동 복사) |
 | 배포 워크플로우 | `.github/workflows/deploy-pages.yml` (main 푸시 시 자동) |
-| **게시 URL** | **`https://sang-woon.github.io/gyeonggi-council/rhwp/privacy.html`** |
+| **게시 URL** | **`https://sang-woon.github.io/gyeonggi-council/privacy.html`** |
 | 비고 | main 머지 + GitHub Pages 배포 후 접근. Play Console "개인정보처리방침 URL"에 등록 |
 
 ## 4. Play Store 스크린샷 (9장 자동 생성)
@@ -72,7 +72,7 @@
 - [x] **10인치 태블릿 스크린샷 3장 (선택)**: `mydocs/release/screenshots/tablet-10/`
 
 ### 정책 URL
-- [x] **개인정보처리방침**: `https://sang-woon.github.io/gyeonggi-council/rhwp/privacy.html` (main 배포 후)
+- [x] **개인정보처리방침**: `https://sang-woon.github.io/gyeonggi-council/privacy.html` (main 배포 후)
 
 ### AAB 빌드
 - [ ] 키스토어 생성 (`keystore/release.keystore` — **작업지시자 작업**)
