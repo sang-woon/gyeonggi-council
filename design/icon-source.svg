@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  경기도의회 HWP 뷰어 — Play Store 아이콘 원본 (1024×1024)
+
+  디자인 요소:
+  - 배경: 경기도의회 공식 컬러 계열 (#003876 ~ #1e40af 그라디언트)
+  - 중앙: 흰색 문서 페이지 + 우측 상단 모서리 접기
+  - 페이지 안: '한' 자형 + 가로줄 (텍스트 표현)
+  - 색조: 신뢰감 있는 정부 기관 톤 + 가독성 (소형 크기 보장)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- 배경 그라디언트 -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="55%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#0c2461"/>
+    </linearGradient>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f1f5f9"/>
+    </linearGradient>
+    <linearGradient id="fold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbe4f0"/>
+      <stop offset="100%" stop-color="#9aafc8"/>
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+      <feOffset dx="0" dy="14" result="offsetblur"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.34"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 배경 (둥근 사각형은 Android adaptive icon mask가 처리하므로 sqaure 유지) -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- 장식: 좌상단·우하단 라이트 패턴 -->
+  <circle cx="180" cy="190" r="110" fill="#ffffff" opacity="0.04"/>
+  <circle cx="900" cy="880" r="160" fill="#ffffff" opacity="0.05"/>
+
+  <!-- 문서 페이지 (중앙, 안전 영역 내) -->
+  <g filter="url(#shadow)" transform="translate(232,180)">
+    <!-- 페이지 본체 (우상단 잘린 모양) -->
+    <path d="M 0 32
+             Q 0 0, 32 0
+             L 410 0
+             L 560 150
+             L 560 632
+             Q 560 664, 528 664
+             L 32 664
+             Q 0 664, 0 632
+             Z"
+          fill="url(#page)"
+          stroke="#cbd5e1"
+          stroke-width="2"/>
+    <!-- 접은 모서리 (삼각형) -->
+    <path d="M 410 0 L 560 150 L 410 150 Z"
+          fill="url(#fold)"
+          stroke="#94a3b8"
+          stroke-width="2"/>
+
+    <!-- '한' 자 (Hangul) 흰 페이지 위 진한 네이비 -->
+    <text x="280" y="395"
+          font-family="Malgun Gothic, Apple SD Gothic Neo, sans-serif"
+          font-size="320"
+          font-weight="800"
+          text-anchor="middle"
+          fill="#1e3a8a"
+          letter-spacing="0">한</text>
+
+    <!-- 텍스트 라인 (문서 표현) -->
+    <rect x="80"  y="498" width="400" height="14" rx="7" fill="#cbd5e1"/>
+    <rect x="80"  y="538" width="320" height="14" rx="7" fill="#cbd5e1"/>
+    <rect x="80"  y="578" width="380" height="14" rx="7" fill="#cbd5e1"/>
+  </g>
+
+  <!-- 하단 라벨 (작게) -->
+  <text x="512" y="924"
+        font-family="Malgun Gothic, sans-serif"
+        font-size="64"
+        font-weight="700"
+        text-anchor="middle"
+        fill="#ffffff"
+        opacity="0.92"
+        letter-spacing="6">HWP</text>
+</svg>

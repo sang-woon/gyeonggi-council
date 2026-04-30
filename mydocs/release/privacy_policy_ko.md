@@ -56,8 +56,13 @@
 
 ---
 
-**호스팅 안내 (단계 5 진입 시 결정)**:
-- 옵션 A: 경기도의회 공식 홈페이지에 정적 페이지로 게시 (권장)
-- 옵션 B: GitHub Pages에 게시 (`https://sang-woon.github.io/gyeonggi-council/privacy.html`)
+## 호스팅 정보
 
-본 마크다운을 HTML로 변환하여 HTTPS URL로 노출 필요. Play Console "개인정보처리방침 URL" 입력란에 URL 등록.
+| 항목 | 값 |
+|------|----|
+| HTML 소스 | `rhwp-studio/public/privacy.html` (Vite가 dist에 복사) |
+| 배포 워크플로우 | `.github/workflows/deploy-pages.yml` (main 푸시 시 자동) |
+| 게시 URL | **`https://sang-woon.github.io/gyeonggi-council/rhwp/privacy.html`** |
+| 백업 옵션 | 향후 경기도의회 공식 홈페이지 정적 페이지 게시 가능 (URL 변경 시 본 문서·Play Console 동시 업데이트) |
+
+Play Console "개인정보처리방침 URL" 필드에 위 URL 등록. main 머지 + GitHub Pages 배포 후 접근 가능.
